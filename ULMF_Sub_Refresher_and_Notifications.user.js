@@ -3,7 +3,8 @@
 // @namespace   ulmfrefresher
 // @description Refreshes Page and Checks for Unread Subs
 // @include     http://www.ulmf.org/bbs/subscription.php*
-// @version     1.0.0
+// @version     1.0.1
+// @downloadURL https://github.com/emerladCoder/ULMF_Subscription_Refresher/raw/master/ULMF_Sub_Refresher_and_Notifications.user.js
 // @grant       unsafeWindow
 // ==/UserScript==
 
@@ -52,7 +53,7 @@ var SubRefresher = {
 
             // make audio element
             var audio = document.createElement("audio");
-            audio.src = "";
+            audio.src = audio_source;
             audio.preload = "auto";
             // attach it to the page
             $("body").append(audio);
