@@ -3,7 +3,7 @@
 // @namespace   ulmfrefresher
 // @description Refreshes Page and Checks for Unread Subs
 // @include     http://www.ulmf.org/bbs/subscription.php*
-// @version     1.0.3
+// @version     1.0.4
 // @downloadURL https://github.com/emerladCoder/ULMF_Subscription_Refresher/raw/master/ULMF_Sub_Refresher_and_Notifications.user.js
 // @grant       unsafeWindow
 // ==/UserScript==
@@ -118,7 +118,7 @@ var userScriptResume = function() {
 
     // give page some time, then call check function
     setTimeout(function() {
-        unsafeWindow.SubRefresher.check_for_update(unsafeWindow.SubRefresher.initialization_time * 1000);
+        unsafeWindow.SubRefresher.check_for_update();
     }, unsafeWindow.SubRefresher.initialization_time * 1000);
 }
 
@@ -134,7 +134,7 @@ var consoleRestore = {
         temp_frame.style.display = 'none';
         document.body.appendChild(temp_frame);
         window.console = temp_frame.contentWindow.console;
-        temp_frame.remove();
+        //temp_frame.remove();
     }
 };
 
