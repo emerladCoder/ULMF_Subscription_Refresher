@@ -29,7 +29,7 @@ var userScriptResume = function() {
         minutes_to_refresh: 2,                                                                  // How long to wait to refresh page (minutes)
         audio_source: "http://docs.google.com/uc?export=open&id=0ByupedyEGgmpWXZlaDd6T19Rb1k",  // where to get notification sound to play
         audio_time: 2.5,                                                                        // How long between each play of audio (seconds)
-        initializeation_time: 2.5,                                                              // How long to wait before performing checks (seconds)
+        initialization_time: 2.5,                                                               // How long to wait before performing checks (seconds)
         //
         ////////////////////////////////////////////////////
 
@@ -114,12 +114,12 @@ var userScriptResume = function() {
     console.log("Loaded:\t\t SubRefresher");
 
 
-    console.log("SubRefresher:\t Waiting " + unsafeWindow.SubRefresher.initializeation_time + " seconds to check for new subscription(s)");
+    console.log("SubRefresher:\t Waiting " + unsafeWindow.SubRefresher.initialization_time + " seconds to check for new subscription(s)");
 
     // give page some time, then call check function
     setTimeout(function() {
-        unsafeWindow.SubRefresher.check_for_update(unsafeWindow.SubRefresher.initializeation_time * 1000);
-    }, unsafeWindow.SubRefresher.initializeation_time * 1000);
+        unsafeWindow.SubRefresher.check_for_update(unsafeWindow.SubRefresher.initialization_time * 1000);
+    }, unsafeWindow.SubRefresher.initialization_time * 1000);
 }
 
 
