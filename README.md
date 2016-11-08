@@ -10,5 +10,5 @@ To modify the settings of the script you can change
  * where to get notification sound to play
 * audio_time (default 2.5 seconds)                                                                        
  * How long between each play of audio (seconds)
-* initializeation_time (default 2.5 seconds)                                                              
+* initialization_time (default 2.5 seconds)                                                              
  * How long to wait before performing checks (seconds)
