@@ -4,7 +4,7 @@
 // @description Refreshes Page and Checks for Unread Subs
 // @include     http://www.ulmf.org/bbs/subscription.php*
 // @include     http://www.ulmf.org/bbs/usercp.php
-// @version     1.0.6
+// @version     1.0.7
 // @downloadURL https://github.com/emerladCoder/ULMF_Subscription_Refresher/raw/master/ULMF_Sub_Refresher_and_Notifications.user.js
 // @grant       unsafeWindow
 // ==/UserScript==
@@ -29,13 +29,14 @@ var userScriptResume = function() {
 //      CUSTOMIZATION OPTIONS                                                                   //
         minutes_to_refresh: 2,                                                                  // How long to wait to refresh page (minutes)
         audio_source: "http://docs.google.com/uc?export=open&id=0ByupedyEGgmpWXZlaDd6T19Rb1k",  // where to get notification sound to play
-        audio_time: 2.5,                                                                        // How long between each play of audio (seconds)
-        initialization_time: 2.5,                                                               // How long to wait before performing checks (seconds)
+        audio_time: 5.0,                                                                        // How long between each play of audio (seconds)
+        initialization_time: 1.0,                                                               // How long to wait before performing checks (seconds)
 //                                                                                              //
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
         refresh_timeout: null,                                                                  // id of timeout
         new_sub_interval: null,                                                                 // id of interval for sound
+        new_sub_urls: [],                                                                       // list of new sub urls
         refresh: function() {                                                                   // refresh the page
             // reload without using cache
             location.reload(true);      
@@ -56,7 +57,9 @@ var userScriptResume = function() {
             for( var i = 0; i < image_icons.length; i++) {
                 if (image_icons[i].src.indexOf("new") >= 0) {
                     update = true;
-                    break;
+
+                    var link = image_icons[i].parentElement.parentElement.children[2].children[0].children[1].href;
+                    SubRefresher.new_sub_urls[SubRefresher.new_sub_urls.length] = link;
                 }
             }
 
@@ -82,18 +85,37 @@ var userScriptResume = function() {
 
                 // notification popup
                 var popup = document.createElement("div");
-                popup.style.cssText = 'color:black;width:80px;height:70px;background-color:white;position:fixed;top:0;bottom:0;left:0;right:0;margin:auto;border:5px solid;border-color:#738FBF;padding:10px;z-index:5;';
-                popup.innerHTML = '<center>New Sub!!!<br><br>Click to Close</center>';
+                popup.style.cssText = 'color:black;width:150px;height:70px;background-color:white;position:fixed;top:0;bottom:0;left:0;right:0;margin:auto;border:5px solid;border-color:#738FBF;padding:10px;z-index:5;';
+                var button_style = "border-color:gray;border-width:2px;border-style:solid;padding:3px;color:white;background-color:#738FBF;";
+                popup.innerHTML = '<table><tr><td colspan="2" style="padding-bottom:10px;"><center>New Subscription(s)!!!</center></td></tr><tr><td id="sr_open_all" style='+ button_style +'><center>Open All</center></td><td id="sr_close" style='+ button_style +'><center>Close</center></td></tr></table>';
 
-                // close notification on click, and make audio stop
-                popup.onclick = function() {
+                
+                // attach it to the page
+                $("body").append(popup);
+
+                var stop_sound_and_close = function() {
                     clearInterval(SubRefresher.new_sub_interval);
                     popup.remove();
 
                     console.log("SubRefresher:\t Closing popup and stopping notification sound");
                 }
-                // attach it to the page
-                $("body").append(popup);
+
+                // close notification on click, and make audio stop
+                $("#sr_close").click(function() {
+                   stop_sound_and_close();
+                });
+
+                // open all on click
+                $("#sr_open_all").click(function() {
+                    stop_sound_and_close()
+
+                    console.log("SubRefresher:\t Opening all in new tabs");
+
+                    for (var i = 0; i < SubRefresher.new_sub_urls.length; i++) {
+                        window.open(SubRefresher.new_sub_urls[i]);
+                    }
+                });
+
             }
             else {
                 console.log("SubRefresher:\t Found no new subscriptions(s), refreshing page in " + SubRefresher.minutes_to_refresh + " minutes");
