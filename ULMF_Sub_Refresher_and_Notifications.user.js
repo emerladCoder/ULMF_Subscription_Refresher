@@ -4,7 +4,7 @@
 // @description Refreshes Page and Checks for Unread Subs
 // @include     http://www.ulmf.org/bbs/subscription.php*
 // @include     http://www.ulmf.org/bbs/usercp.php
-// @version     1.0.5
+// @version     1.0.6
 // @downloadURL https://github.com/emerladCoder/ULMF_Subscription_Refresher/raw/master/ULMF_Sub_Refresher_and_Notifications.user.js
 // @grant       unsafeWindow
 // ==/UserScript==
@@ -15,7 +15,7 @@ if (window.top != window.self) {
 }
 
 ////////////////////////////////////////////////////////////////////////////
-// userScriptResume                                                       //
+// SubRefresher                                                           //
 ////////////////////////////////////////////////////////////////////////////
 
 console.log("Userscript SubRefresher version " + GM_info.script.version);
@@ -25,14 +25,14 @@ var userScriptResume = function() {
     // Global Scope variable
     var SubRefresher = {
 
-        ////////////////////////////////////////////////////
-        // CUSTOMIZATION OPTIONS
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//      CUSTOMIZATION OPTIONS                                                                   //
         minutes_to_refresh: 2,                                                                  // How long to wait to refresh page (minutes)
         audio_source: "http://docs.google.com/uc?export=open&id=0ByupedyEGgmpWXZlaDd6T19Rb1k",  // where to get notification sound to play
         audio_time: 2.5,                                                                        // How long between each play of audio (seconds)
         initialization_time: 2.5,                                                               // How long to wait before performing checks (seconds)
-        //
-        ////////////////////////////////////////////////////
+//                                                                                              //
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
         refresh_timeout: null,                                                                  // id of timeout
         new_sub_interval: null,                                                                 // id of interval for sound
@@ -104,16 +104,7 @@ var userScriptResume = function() {
     };
 
     // inject SubRefresher functions onto page
-    console.log("Injecting:\t SubRefresher");
-
-    // Create script to inject
-    var scriptSubRefresher = document.createElement('script');
-    scriptSubRefresher.type = "text/javascript";
-    scriptSubRefresher.innerHTML = 'var SubRefresher = ' + SubRefresher.toSource();
-    // Inject the script
-    document.getElementsByTagName('head')[0].appendChild(scriptSubRefresher);
-    console.log("Loaded:\t\t SubRefresher");
-
+    inject_script("SubRefresher", SubRefresher);
 
     console.log("SubRefresher:\t Waiting " + unsafeWindow.SubRefresher.initialization_time + " seconds to check for new subscription(s)");
 
@@ -125,12 +116,49 @@ var userScriptResume = function() {
 
 
 ////////////////////////////////////////////////////////////////////////////
+// Script Injector                                                        //
+////////////////////////////////////////////////////////////////////////////
+
+// Inject a script into the page header
+//      script name     - name of script for logging and if script is object for name of object variable
+//      script_source   - object to add to the page, or url of script to loaded
+//      onload          - callback function for when script is loaded (only applicable if script_source is url)
+var inject_script = function (script_name, script_source, onload = null) {
+    
+    console.log("Injecting:\t " + script_name);
+
+    // create the script
+    var script = document.createElement('script');
+    script.type = "text/javascript";
+
+    // script source is an object to add to the page
+    if (typeof(script_source) == "object") {
+        script.innerHTML = 'var ' + script_name + ' = ' + script_source.toSource();
+    }
+    // script is a url source to add
+    else if (typeof(script_source) == "string") {
+        script.src = script_source;
+    }
+    
+    // callback function for script done loading (mainly for url sources)
+    if (onload != null && typeof(onload) == "function") {
+        script.onload = onload;
+    }
+
+    // Inject the script
+    document.getElementsByTagName('head')[0].appendChild(script);
+
+    console.log("Injected:\t " + script_name);
+}
+
+
+////////////////////////////////////////////////////////////////////////////
 // consoleRestore                                                         //
 ////////////////////////////////////////////////////////////////////////////
 
 // resotre console, which is removed by vbulleting_global.js
 var consoleRestore = {
-    restore: function() {
+restore: function() {                                                                           // function that restores the console via an iframe
         var temp_frame = document.createElement('iframe');
         temp_frame.style.display = 'none';
         document.body.appendChild(temp_frame);
@@ -141,42 +169,25 @@ var consoleRestore = {
 
 
 // inject the consoleRestore functions onto page
-console.log("Injecting:\t consoleRestore");
+inject_script("consoleRestore", consoleRestore);
 
-// Create script to inject
-var scriptConsoleRestore = document.createElement('script');
-scriptConsoleRestore.type = "text/javascript";
-scriptConsoleRestore.innerHTML = 'var consoleRestore = ' + consoleRestore.toSource();
-// Inject the script
-document.getElementsByTagName('head')[0].appendChild(scriptConsoleRestore);
-
-// call the script
+// call function to restore the console
 unsafeWindow.consoleRestore.restore();
-
-// Everything after appending this script is run after the pages own js is loaded
-//  including the vbulleting_global.js which removes the console
-//  so if this shows up in the console, then the console has been restored
-console.log("Loaded:\t\t consoleRestore => Console Restored");
 
 
 ////////////////////////////////////////////////////////////////////////////
 // jQuery                                                                 //
 ////////////////////////////////////////////////////////////////////////////
 
-// inject jQuery onto page
-console.log("Injecting:\t jQuery");
-
-// create script to inject
-var script_jquery = document.createElement('script');
-script_jquery.type = "text/javascript";
-script_jquery.src = "http://code.jquery.com/jquery-latest.min.js";
-script_jquery.onload = function () {
-    // jquery is loaded, okay to run the rest of the user script
-    console.log("Loaded:\t\t jQuery Version " + unsafeWindow.jQuery.fn.jquery);
+// jQuery onload callback
+var jQuery_loaded = function () {
+    // version of jQuery
+    console.log("jQuery:\t\t v" + unsafeWindow.jQuery.fn.jquery);
 
     // continue with the rest of the script
     userScriptResume();
 };
-// Inject the script
-document.getElementsByTagName('head')[0].appendChild(script_jquery);
+
+// inject jQuery
+inject_script("jQuery", "http://code.jquery.com/jquery-latest.min.js", jQuery_loaded);
 
