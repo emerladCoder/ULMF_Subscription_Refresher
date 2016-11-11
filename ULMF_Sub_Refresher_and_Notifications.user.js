@@ -4,7 +4,7 @@
 // @description Refreshes Page and Checks for Unread Subs
 // @include     http://www.ulmf.org/bbs/subscription.php*
 // @include     http://www.ulmf.org/bbs/usercp.php
-// @version     1.0.7
+// @version     1.0.8
 // @downloadURL https://github.com/emerladCoder/ULMF_Subscription_Refresher/raw/master/ULMF_Sub_Refresher_and_Notifications.user.js
 // @grant       unsafeWindow
 // ==/UserScript==
@@ -51,17 +51,20 @@ var userScriptResume = function() {
             var update = false;
 
             // get titles
-            var image_icons = $("img[id^='thread_statusicon']");
+            var new_posts = $("img[title='Go to first new post']");
 
             // check if anythying new
-            for( var i = 0; i < image_icons.length; i++) {
-                if (image_icons[i].src.indexOf("new") >= 0) {
-                    update = true;
+            if (new_posts.length > 0) {
+                SubRefresher.new_sub_urls = [];
+                update = true;
 
-                    var link = image_icons[i].parentElement.parentElement.children[2].children[0].children[1].href;
+                // get links for opening
+                for( var i = 0; i < new_posts.length; i++) {
+                    var link = new_posts[i].parentElement.href;
                     SubRefresher.new_sub_urls[SubRefresher.new_sub_urls.length] = link;
                 }
             }
+            
 
             if (update) {
                 console.log("SubRefresher:\t Found new subscription(s), playing sound and showing popup");
@@ -93,6 +96,7 @@ var userScriptResume = function() {
                 // attach it to the page
                 $("body").append(popup);
 
+                // stop audio and close popup function
                 var stop_sound_and_close = function() {
                     clearInterval(SubRefresher.new_sub_interval);
                     popup.remove();
@@ -100,12 +104,14 @@ var userScriptResume = function() {
                     console.log("SubRefresher:\t Closing popup and stopping notification sound");
                 }
 
-                // close notification on click, and make audio stop
+                // button handlers
+
+                // just stop audio and close popup
                 $("#sr_close").click(function() {
                    stop_sound_and_close();
                 });
 
-                // open all on click
+                // open all new subs on click
                 $("#sr_open_all").click(function() {
                     stop_sound_and_close()
 
