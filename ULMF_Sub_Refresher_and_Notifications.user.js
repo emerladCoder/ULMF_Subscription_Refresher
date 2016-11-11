@@ -29,8 +29,8 @@ var userScriptResume = function() {
 //      CUSTOMIZATION OPTIONS                                                                   //
         minutes_to_refresh: 2,                                                                  // How long to wait to refresh page (minutes)
         audio_source: "http://docs.google.com/uc?export=open&id=0ByupedyEGgmpWXZlaDd6T19Rb1k",  // where to get notification sound to play
-        audio_time: 5.0,                                                                        // How long between each play of audio (seconds)
-        initialization_time: 1.0,                                                               // How long to wait before performing checks (seconds)
+        audio_time: 2.5,                                                                        // How long between each play of audio (seconds)
+        initialization_time: 2.5,                                                               // How long to wait before performing checks (seconds)
 //                                                                                              //
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
