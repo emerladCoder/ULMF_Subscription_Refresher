@@ -4,7 +4,7 @@
 // @description Refreshes Page and Checks for Unread Subs
 // @include     http://www.ulmf.org/bbs/subscription.php*
 // @include     http://www.ulmf.org/bbs/usercp.php
-// @version     1.0.8
+// @version     1.0.9
 // @downloadURL https://github.com/emerladCoder/ULMF_Subscription_Refresher/raw/master/ULMF_Sub_Refresher_and_Notifications.user.js
 // @grant       unsafeWindow
 // ==/UserScript==
@@ -120,6 +120,10 @@ var userScriptResume = function() {
                     for (var i = 0; i < SubRefresher.new_sub_urls.length; i++) {
                         window.open(SubRefresher.new_sub_urls[i]);
                     }
+
+                    console.log("SubRefresher:\t Refreshing page in " + SubRefresher.minutes_to_refresh + " minutes, to continue checking for new subs");
+
+                    SubRefresher.start_timeout(SubRefresher.minutes_to_refresh);
                 });
 
             }
