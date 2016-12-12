@@ -4,7 +4,7 @@
 // @description Refreshes Page and Checks for Unread Subs
 // @include     http://www.ulmf.org/bbs/subscription.php*
 // @include     http://www.ulmf.org/bbs/usercp.php
-// @version     1.0.9
+// @version     1.0.10
 // @downloadURL https://github.com/emerladCoder/ULMF_Subscription_Refresher/raw/master/ULMF_Sub_Refresher_and_Notifications.user.js
 // @grant       unsafeWindow
 // ==/UserScript==
@@ -88,9 +88,10 @@ var userScriptResume = function() {
 
                 // notification popup
                 var popup = document.createElement("div");
-                popup.style.cssText = 'color:black;width:150px;height:70px;background-color:white;position:fixed;top:0;bottom:0;left:0;right:0;margin:auto;border:5px solid;border-color:#738FBF;padding:10px;z-index:5;';
-                var button_style = "border-color:gray;border-width:2px;border-style:solid;padding:3px;color:white;background-color:#738FBF;";
-                popup.innerHTML = '<table><tr><td colspan="2" style="padding-bottom:10px;"><center>New Subscription(s)!!!</center></td></tr><tr><td id="sr_open_all" style='+ button_style +'><center>Open All</center></td><td id="sr_close" style='+ button_style +'><center>Close</center></td></tr></table>';
+                popup.style.cssText = 'width:150px;height:84px;position:fixed;top:0;bottom:0;left:0;right:0;margin:auto;padding:5px;z-index:5;';
+                popup.className = "tfoot";
+                var button_style = "padding:3px;";
+                popup.innerHTML = '<div class="alt1" style="padding:5px;"><table><tr><td colspan="2" style="padding-bottom:10px;"><center>New Subscription(s)!!!</center></td></tr><tr><td id="sr_open_all" style='+ button_style +' class="alt2"><center>Open All</center></td><td id="sr_close" style='+ button_style +' class="alt2"><center>Close</center></td></tr></table></div>';
 
                 
                 // attach it to the page
